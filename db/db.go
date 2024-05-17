@@ -35,6 +35,10 @@ type Compatibility struct {
 	YbdbVersions []string `json:"ybdb_versions"`
 }
 
+type CompatibilityRequest struct {
+	YbaVersion string `json:"yba_version"`
+}
+
 func Connect() error {
 	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
 		config.AppConfig.DBHost, config.AppConfig.DBPort, config.AppConfig.DBUser, config.AppConfig.DBPassword, config.AppConfig.DBName, config.AppConfig.DBSSLMode)
