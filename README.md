@@ -19,7 +19,7 @@ Create a file named `config.ini` with the following content:
 [db]
 host = localhost
 port = 5432
-user = yourusername
+user = saratkumar-yb
 password = yourpassword
 dbname = yourdbname
 sslmode = disable

@@ -11,6 +11,10 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	_ "github.com/lib/pq"
+	"github.com/saratkumar-yb/infinityapi/config"
+	"github.com/saratkumar-yb/infinityapi/db"
+	"github.com/saratkumar-yb/infinityapi/handlers"
+	"github.com/saratkumar-yb/infinityapi/router"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,18 +24,12 @@ type Response struct {
 }
 
 func setupRouter() *httprouter.Router {
-	router := httprouter.New()
-	router.POST("/yba", insertYbaHandler)
-	router.POST("/ybdb", insertYbdbHandler)
-	router.POST("/compatibility", insertCompatibilityHandler)
-	router.POST("/compatibility_list", getCompatibleYbdbHandler)
-
-	return router
+	return router.NewRouter()
 }
 
 func setupDatabase() (*sql.DB, error) {
-	loadConfig()
-	return dbConnect()
+	config.LoadConfig()
+	return db.Connect()
 }
 
 func clearDatabase(db *sql.DB) {
@@ -178,7 +176,7 @@ func TestGetCompatibleYbdbHandler(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, rr.Code)
 
-	var response []Ybdb
+	var response []handlers.Ybdb
 	err = json.NewDecoder(rr.Body).Decode(&response)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, response)
