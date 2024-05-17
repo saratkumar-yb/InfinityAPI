@@ -39,27 +39,27 @@ type CompatibilityRequest struct {
 	YbaVersion string `json:"yba_version"`
 }
 
-func Connect() error {
+func Connect() (*sql.DB, error) {
 	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
 		config.AppConfig.DBHost, config.AppConfig.DBPort, config.AppConfig.DBUser, config.AppConfig.DBPassword, config.AppConfig.DBName, config.AppConfig.DBSSLMode)
 	var err error
 	DB, err = sql.Open("postgres", connStr)
-	return err
+	return DB, err
 }
 
 func Migrate() error {
-	err := Connect()
+	db, err := Connect()
 	if err != nil {
 		return err
 	}
-	defer DB.Close()
+	defer db.Close()
 
 	schema, err := os.ReadFile("schema.sql")
 	if err != nil {
 		return err
 	}
 
-	_, err = DB.Exec(string(schema))
+	_, err = db.Exec(string(schema))
 	if err != nil {
 		return err
 	}
