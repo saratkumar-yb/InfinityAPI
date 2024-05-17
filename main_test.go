@@ -31,27 +31,27 @@ func setupDatabase() (*sql.DB, error) {
 	return db.Connect()
 }
 
-func clearDatabase(db *sql.DB) {
-	_, err := db.Exec("TRUNCATE TABLE yba_ybdb_compatibility CASCADE")
+func clearDatabase(database *sql.DB) {
+	_, err := database.Exec("TRUNCATE TABLE yba_ybdb_compatibility CASCADE")
 	if err != nil {
 		log.Fatalf("Failed to clear yba_ybdb_compatibility table: %v", err)
 	}
-	_, err = db.Exec("TRUNCATE TABLE yba CASCADE")
+	_, err = database.Exec("TRUNCATE TABLE yba CASCADE")
 	if err != nil {
 		log.Fatalf("Failed to clear yba table: %v", err)
 	}
-	_, err = db.Exec("TRUNCATE TABLE ybdb CASCADE")
+	_, err = database.Exec("TRUNCATE TABLE ybdb CASCADE")
 	if err != nil {
 		log.Fatalf("Failed to clear ybdb table: %v", err)
 	}
 }
 
 func TestInsertYbaHandler(t *testing.T) {
-	db, err := setupDatabase()
+	database, err := setupDatabase()
 	assert.NoError(t, err)
-	defer db.Close()
+	defer database.Close()
 
-	clearDatabase(db)
+	clearDatabase(database)
 
 	router := setupRouter()
 
@@ -79,11 +79,11 @@ func TestInsertYbaHandler(t *testing.T) {
 }
 
 func TestInsertYbdbHandler(t *testing.T) {
-	db, err := setupDatabase()
+	database, err := setupDatabase()
 	assert.NoError(t, err)
-	defer db.Close()
+	defer database.Close()
 
-	clearDatabase(db)
+	clearDatabase(database)
 
 	router := setupRouter()
 
@@ -112,18 +112,18 @@ func TestInsertYbdbHandler(t *testing.T) {
 }
 
 func TestInsertCompatibilityHandler(t *testing.T) {
-	db, err := setupDatabase()
+	database, err := setupDatabase()
 	assert.NoError(t, err)
-	defer db.Close()
+	defer database.Close()
 
-	clearDatabase(db)
+	clearDatabase(database)
 
 	router := setupRouter()
 
 	// Insert test data into yba and ybdb tables
-	_, err = db.Exec(`INSERT INTO yba (version, type, architecture, platform, commit, branch) VALUES ('1.0', 'type1', 'arch1', 'platform1', 'commit1', 'branch1')`)
+	_, err = database.Exec(`INSERT INTO yba (version, type, architecture, platform, commit, branch) VALUES ('1.0', 'type1', 'arch1', 'platform1', 'commit1', 'branch1')`)
 	assert.NoError(t, err)
-	_, err = db.Exec(`INSERT INTO ybdb (version, type, architecture, platform, download_url, commit, branch) VALUES ('1.0', 'type1', 'arch1', 'platform1', 'http://example.com/download', 'commit1', 'branch1')`)
+	_, err = database.Exec(`INSERT INTO ybdb (version, type, architecture, platform, download_url, commit, branch) VALUES ('1.0', 'type1', 'arch1', 'platform1', 'http://example.com/download', 'commit1', 'branch1')`)
 	assert.NoError(t, err)
 
 	payload := []byte(`{
@@ -149,18 +149,18 @@ func TestGetCompatibleYbdbHandler(t *testing.T) {
 	router := setupRouter()
 
 	// Ensure there is data in the database for this test
-	db, err := setupDatabase()
+	database, err := setupDatabase()
 	assert.NoError(t, err)
-	defer db.Close()
+	defer database.Close()
 
-	clearDatabase(db)
+	clearDatabase(database)
 
 	// Insert test data into yba and ybdb tables
-	_, err = db.Exec(`INSERT INTO yba (version, type, architecture, platform, commit, branch) VALUES ('1.0', 'type1', 'arch1', 'platform1', 'commit1', 'branch1')`)
+	_, err = database.Exec(`INSERT INTO yba (version, type, architecture, platform, commit, branch) VALUES ('1.0', 'type1', 'arch1', 'platform1', 'commit1', 'branch1')`)
 	assert.NoError(t, err)
-	_, err = db.Exec(`INSERT INTO ybdb (version, type, architecture, platform, download_url, commit, branch) VALUES ('1.0', 'type1', 'arch1', 'platform1', 'http://example.com/download', 'commit1', 'branch1')`)
+	_, err = database.Exec(`INSERT INTO ybdb (version, type, architecture, platform, download_url, commit, branch) VALUES ('1.0', 'type1', 'arch1', 'platform1', 'http://example.com/download', 'commit1', 'branch1')`)
 	assert.NoError(t, err)
-	_, err = db.Exec(`INSERT INTO yba_ybdb_compatibility (yba_version, ybdb_version) VALUES ('1.0', '1.0')`)
+	_, err = database.Exec(`INSERT INTO yba_ybdb_compatibility (yba_version, ybdb_version) VALUES ('1.0', '1.0')`)
 	assert.NoError(t, err)
 
 	payload := []byte(`{

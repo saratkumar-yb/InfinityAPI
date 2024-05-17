@@ -25,11 +25,11 @@ func main() {
 		}
 		log.Println("Migration successful")
 	} else if *startServerCmd {
-		err := db.Connect()
+		database, err := db.Connect()
 		if err != nil {
 			log.Fatalf("Failed to connect to database: %v", err)
 		}
-		defer db.DB.Close()
+		defer database.Close()
 
 		r := router.NewRouter()
 		address := fmt.Sprintf("%s:%d", config.AppConfig.HTTPListener, config.AppConfig.HTTPPort)
