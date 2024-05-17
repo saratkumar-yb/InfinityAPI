@@ -270,6 +270,10 @@ func getCompatibleYbdbHandler(w http.ResponseWriter, r *http.Request, _ httprout
 		return
 	}
 
+	if len(ybdbs) == 0 {
+		ybdbs = []Ybdb{}
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(ybdbs)
 }
