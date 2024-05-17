@@ -9,34 +9,6 @@ import (
 	"github.com/saratkumar-yb/infinityapi/db"
 )
 
-type Yba struct {
-	Version      string `json:"version"`
-	Type         string `json:"type"`
-	Architecture string `json:"architecture"`
-	Platform     string `json:"platform"`
-	Commit       string `json:"commit"`
-	Branch       string `json:"branch"`
-}
-
-type Ybdb struct {
-	Version      string `json:"version"`
-	Type         string `json:"type"`
-	Architecture string `json:"architecture"`
-	Platform     string `json:"platform"`
-	DownloadURL  string `json:"download_url"`
-	Commit       string `json:"commit"`
-	Branch       string `json:"branch"`
-}
-
-type Compatibility struct {
-	YbaVersions  []string `json:"yba_versions"`
-	YbdbVersions []string `json:"ybdb_versions"`
-}
-
-type CompatibilityRequest struct {
-	YbaVersion string `json:"yba_version"`
-}
-
 func jsonResponse(w http.ResponseWriter, status string, message string) {
 	w.Header().Set("Content-Type", "application/json")
 	response := map[string]string{"status": status, "message": message}
@@ -44,7 +16,7 @@ func jsonResponse(w http.ResponseWriter, status string, message string) {
 }
 
 func InsertYbaHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	var yba Yba
+	var yba db.Yba
 	err := json.NewDecoder(r.Body).Decode(&yba)
 	if err != nil {
 		jsonResponse(w, "failed", err.Error())
@@ -62,7 +34,7 @@ func InsertYbaHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 }
 
 func InsertYbdbHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	var ybdb Ybdb
+	var ybdb db.Ybdb
 	err := json.NewDecoder(r.Body).Decode(&ybdb)
 	if err != nil {
 		jsonResponse(w, "failed", err.Error())
@@ -80,7 +52,7 @@ func InsertYbdbHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 }
 
 func InsertCompatibilityHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	var compatibility Compatibility
+	var compatibility db.Compatibility
 	err := json.NewDecoder(r.Body).Decode(&compatibility)
 	if err != nil {
 		jsonResponse(w, "failed", err.Error())
@@ -98,7 +70,7 @@ func InsertCompatibilityHandler(w http.ResponseWriter, r *http.Request, _ httpro
 }
 
 func GetCompatibleYbdbHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	var req CompatibilityRequest
+	var req db.CompatibilityRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		jsonResponse(w, "failed", err.Error())

@@ -13,7 +13,6 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/saratkumar-yb/infinityapi/config"
 	"github.com/saratkumar-yb/infinityapi/db"
-	"github.com/saratkumar-yb/infinityapi/handlers"
 	"github.com/saratkumar-yb/infinityapi/router"
 	"github.com/stretchr/testify/assert"
 )
@@ -176,7 +175,7 @@ func TestGetCompatibleYbdbHandler(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, rr.Code)
 
-	var response []handlers.Ybdb
+	var response []db.Ybdb
 	err = json.NewDecoder(rr.Body).Decode(&response)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, response)

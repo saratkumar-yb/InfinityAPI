@@ -11,6 +11,30 @@ import (
 
 var DB *sql.DB
 
+type Yba struct {
+	Version      string `json:"version"`
+	Type         string `json:"type"`
+	Architecture string `json:"architecture"`
+	Platform     string `json:"platform"`
+	Commit       string `json:"commit"`
+	Branch       string `json:"branch"`
+}
+
+type Ybdb struct {
+	Version      string `json:"version"`
+	Type         string `json:"type"`
+	Architecture string `json:"architecture"`
+	Platform     string `json:"platform"`
+	DownloadURL  string `json:"download_url"`
+	Commit       string `json:"commit"`
+	Branch       string `json:"branch"`
+}
+
+type Compatibility struct {
+	YbaVersions  []string `json:"yba_versions"`
+	YbdbVersions []string `json:"ybdb_versions"`
+}
+
 func Connect() error {
 	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
 		config.AppConfig.DBHost, config.AppConfig.DBPort, config.AppConfig.DBUser, config.AppConfig.DBPassword, config.AppConfig.DBName, config.AppConfig.DBSSLMode)
