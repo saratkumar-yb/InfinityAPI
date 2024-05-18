@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "infinityapi-chart.fullname" . }}-postgres
+  labels:
+    {{- include "infinityapi-chart.labels" . | nindent 4 }}
+spec:
+  serviceName: "{{ include "infinityapi-chart.fullname" . }}-postgres"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "infinityapi-chart.name" . }}-postgres
+  template:
+    metadata:
+      labels:
+        app: {{ include "infinityapi-chart.name" . }}-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: "{{ .Values.postgresImage.repository }}:{{ .Values.postgresImage.tag }}"
+          imagePullPolicy: {{ .Values.postgresImage.pullPolicy }}
+          ports:
+            - containerPort: 5432
+              name: postgres
+          env:
+            - name: POSTGRES_DB
+              value: {{ .Values.postgres.dbName }}
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "infinityapi-chart.fullname" . }}-db-secret
+                  key: db-user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "infinityapi-chart.fullname" . }}-db-secret
+                  key: db-password
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data
+        labels:
+          app: {{ include "infinityapi-chart.name" . }}-postgres
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .Values.postgres.persistence.size }}
+        storageClassName: {{ .Values.postgres.persistence.storageClass }}

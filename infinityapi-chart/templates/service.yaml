@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "infinityapi-chart.fullname" . }}
+  labels:
+    {{- include "infinityapi-chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 8000
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ include "infinityapi-chart.name" . }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "infinityapi-chart.fullname" . }}-postgres
+  labels:
+    {{- include "infinityapi-chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.postgresService.type }}
+  ports:
+    - port: {{ .Values.postgresService.port }}
+      targetPort: 5432
+      protocol: TCP
+      name: postgres
+  selector:
+    app: {{ include "infinityapi-chart.name" . }}-postgres
